@@ -281,13 +281,15 @@ void loop() {
         //-----------//
         //  Sensors  //
         //-----------//
-
+        // TODO: Need to figure out how to output encoder values
+        // TODO Need to add voltage, current and temp of the motors
         else if (args[0] == "data") // Send data out
         {
 
             if(args[1] == "sendEnc") // data
             {
                 // outputEncoders();
+
             }
         }
 
