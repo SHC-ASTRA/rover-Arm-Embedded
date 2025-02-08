@@ -61,7 +61,7 @@ int  AxisPosition    [] = {0,0,0,0};              // AxisXPosition    ^^^
 
 void outputEncoders();
 void safety_timeout();
-void updateMotorStatus();
+void updateMotorState();
 
 // int findRotationDirection(float current_direction, float target_direction);
 // bool autoTurn(int time,float target_direction);
@@ -120,16 +120,6 @@ void setup()
         Serial.println("CAN bus started!");
     else
         Serial.println("CAN bus failed!");
-
-
-    //-----------//
-    //  Sensors  //
-    //-----------//
-
-
-    //--------------------//
-    //  Misc. Components  //
-    //--------------------//
 
     
 }
@@ -276,7 +266,7 @@ void loop() {
         else if (command == "time") {
             Serial.println(millis());
         }
-
+        // Refers to the Built In LED, not LED strip
         else if (command == "led") {
             if (args[1] == "on")
                 digitalWrite(LED_BUILTIN, HIGH);
@@ -295,7 +285,7 @@ void loop() {
         else if (args[0] == "data") // Send data out
         {
 
-            if(args[1] == "sendEnc") // data,sendGPS
+            if(args[1] == "sendEnc") // data
             {
                 // outputEncoders();
             }
@@ -380,6 +370,8 @@ void safety_timeout(){
   }
 }
 
+
+// TODO: Needs to be complete- needs to get time to target and target angles per joint- how fast does the joint need to move
 void findSpeedandTime(int ax0, int ax1, int ax2, int ax3)               // Based on how long it will take for axis 0 to get to target location
 {
     
@@ -390,24 +382,14 @@ void findSpeedandTime(int ax0, int ax1, int ax2, int ax3)               // Based
 }
 
 
-// Prints the output of the BNO in one line
-String outputBno()
-{
-    float bnoData2[7];
-    String output;
-    //sprintf(output,"%f,%f,%f,%f,%f,%f,%f",bnoData2[0],bnoData2[1],bnoData2[2],bnoData2[3],bnoData2[4],bnoData2[5],bnoData2[6]);
-    
-    return output;
-}
 
-
-void updateMotorStatus()
+void updateMotorState()
 {
     for (int i = 1; i <= MOTOR_AMOUNT; i++)
     {
         if(!AxisComplete[i-1])
         {
-            if(abs(AxisPosition[i-1] - AxisSetPosition[i-1]) < 10)  // 10 degree percision !!NOT GOOD NEEDS TO BE CHANGED!!
+            if(abs(AxisPosition[i-1] - AxisSetPosition[i-1]) < 1) //TODO: Validate 1 degree precision
             {
                 // motorList[i-1]->stop();
                 COMMS_UART.printf("stop,%i",i);
