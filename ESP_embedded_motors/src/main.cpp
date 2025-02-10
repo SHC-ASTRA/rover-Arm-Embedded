@@ -512,11 +512,13 @@ void Stop()
     }
 }
 
+*/
 // Enables or disables brake mode for all motors
 void Brake(bool enable) {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < MOTOR_AMOUNT; i++)
         motorList[i]->setBrake(enable);
 }
+/*
 
 // Tells the rover to go forwards
 // Does not bypass acceleration

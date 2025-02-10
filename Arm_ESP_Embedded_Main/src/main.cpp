@@ -61,6 +61,8 @@ int  AxisPosition    [] = {0,0,0,0};              // AxisXPosition    ^^^
 
 void outputEncoders();
 void safety_timeout();
+void findSpeedandTime(int time);
+void convertToDutyCycle(float& dpsSpeed, int gearRatio);
 void updateMotorState();
 
 // int findRotationDirection(float current_direction, float target_direction);
