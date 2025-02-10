@@ -349,7 +349,7 @@ void safety_timeout()
   {
     // lastCtrlCmd = millis();//just update the var so this only runs every 2 seconds.
 
-    Serial1.println("ctrl,0,0,0");
+    COMMS_UART.println("ctrl,0,0,0");
     Serial.println("No Control / Safety Timeout");
   }
 }
@@ -371,16 +371,15 @@ void findSpeedandTime(int time)               // Based on how long it will take 
     convertToDutyCycle(setSpeed[2], 3750);
     convertToDutyCycle(setSpeed[3], 2500);
 
-    //send the ctrl, speed, speed, speed command here
+    // Send the ctrl, speed, speed, speed command here
+    COMMS_UART.printf("Man,%i,%i,%i",setSpeed[1],setSpeed[2],setSpeed[3]);
 }
 
 // Pass by reference because it's easier
 void convertToDutyCycle(float& dpsSpeed, int gearRatio)
 {
-    dpsSpeed = (dpsSpeed*gearRatio)/11000;
+    dpsSpeed = (dpsSpeed*gearRatio)/11000; // Retarded solution, should be changed
 }
-
-
 
 void updateMotorState()
 {
@@ -391,7 +390,14 @@ void updateMotorState()
             if(abs(AxisPosition[i-1] - AxisSetPosition[i-1]) < 1) //TODO: Validate 1 degree precision
             {
                 // motorList[i-1]->stop();
+                if (!i)
+                {
+                    // Stop the stepper motor
+                }
+                else
+                {
                 COMMS_UART.printf("stop,%i",i);
+                }
                 
                 AxisComplete[i-1] = true;
             }
