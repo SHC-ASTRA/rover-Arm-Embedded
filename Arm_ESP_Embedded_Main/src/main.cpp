@@ -202,7 +202,7 @@ void loop() {
         // REV
 
         else if (commandID == CMD_REV_STOP) {
-            COMMS_UART.println("ctrl,stop");
+            COMMS_UART.println("Stop");
         }
         else if (commandID == CMD_REV_IDENTIFY) {
             if (canData.size() == 1) {
@@ -297,7 +297,7 @@ void loop() {
         //  Physical  //
         //------------//
 
-        else if (args[0] == "Man") // manual control, equivical to a ctrl command
+        else if (args[0] == "ctrl") // manual control, equivical to a ctrl command
         {
             COMMS_UART.println(command);
         }
@@ -372,7 +372,7 @@ void findSpeedandTime(int time)               // Based on how long it will take 
     convertToDutyCycle(setSpeed[3], 2500);
 
     // Send the ctrl, speed, speed, speed command here
-    COMMS_UART.printf("Man,%i,%i,%i",setSpeed[1],setSpeed[2],setSpeed[3]);
+    COMMS_UART.printf("ctrl,%i,%i,%i",setSpeed[1],setSpeed[2],setSpeed[3]);
 }
 
 // Pass by reference because it's easier

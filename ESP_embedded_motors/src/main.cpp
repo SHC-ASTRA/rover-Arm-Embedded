@@ -364,7 +364,7 @@ void loop() {
         //----------//
         //  Motors  //
         //----------//
-        else if (args[0] == "ctrl") // Is looking for a command that looks like "ctrl,LeftY-Axis,RightY-Axis" where LY,RY are >-1 and <1
+        else if (args[0] == "ctrl")      
         {   
             lastCtrlCmd = millis();
             if (command != prevCommand)
