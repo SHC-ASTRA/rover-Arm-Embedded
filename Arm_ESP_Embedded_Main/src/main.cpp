@@ -297,41 +297,22 @@ void loop() {
         //  Physical  //
         //------------//
 
-        else if (args[0] == "ctrl") // Is looking for a command that looks like "ctrl,LeftY-Axis,RightY-Axis" where LY,RY are >-1 and <1
+        else if (args[0] == "Man") // manual control, equivical to a ctrl command
         {
-            COMMS_UART.print(command);
-            lastCtrlCmd = millis();
+            COMMS_UART.println(command);
         }
 
-        else if (args[0] == "Man") // Is looking for a command that looks like "ctrl,LeftY-Axis,RightY-Axis" where LY,RY are >-1 and <1
+        else if (args[0] == "IKA") // Set the target angle for IK
         {
-            Serial1.println(command);
-
-            int speed1 = args[1].toInt();
-            int speed2 = args[2].toInt();
-            int speed3 = args[3].toInt();
-            int speed4 = args[4].toInt();
-
-            COMMS_UART.printf("ctrl,%s,%s,%s,%s", speed1, speed2, speed3, speed4);
-
-        }
-
-        else if (args[0] == "IKA") // Is looking for a command that looks like "ctrl,LeftY-Axis,RightY-Axis" where LY,RY are >-1 and <1
-        {
-            Serial1.println(command);
-
-            //COMMS_UART.printf("ctrl,%s,%s,%s",args[4],args[5],args[6]);
-
-            for (int i = 1; i <= MOTOR_AMOUNT; i++) {
+            for (int i = 1; i <= MOTOR_AMOUNT; i++) 
+            {
                 AxisSetPosition[i-1] = args[i].toInt();
             }
         }
 
-        else if (args[0] == "IKT") // Is looking for a command that looks like "ctrl,LeftY-Axis,RightY-Axis" where LY,RY are >-1 and <1
-        {
-            Serial1.println(command);
-
-            // findSpeedandTime(args[1].toInt(),args[2].toInt(),args[3].toInt(),args[4].toInt());
+        else if (args[0] == "IKT") // Set the speed for each controller based on the given time
+        {    
+            findSpeedandTime(args[1].toInt());
         }
     }
 
@@ -362,7 +343,8 @@ void loop() {
 //                                                    //
 //----------------------------------------------------//
 
-void safety_timeout(){
+void safety_timeout()
+{
   if(millis() - lastCtrlCmd > 2000)//if no control commands are received for 2 seconds
   {
     // lastCtrlCmd = millis();//just update the var so this only runs every 2 seconds.
@@ -374,13 +356,28 @@ void safety_timeout(){
 
 
 // TODO: Needs to be complete- needs to get time to target and target angles per joint- how fast does the joint need to move
-void findSpeedandTime(int ax0, int ax1, int ax2, int ax3)               // Based on how long it will take for axis 0 to get to target location
+void findSpeedandTime(int time)               // Based on how long it will take for axis 0 to get to target location
 {
-    
-    // find distance from ax current and ax desired
-    // d/v = t
-    // use for finding the speeds for all other joints
-    // v = d/t
+    float setSpeed[MOTOR_AMOUNT];
+    // Figure out the degrees per second
+    for (int i = 0; i < MOTOR_AMOUNT; i++)
+    {
+        setSpeed[i] = abs(AxisPosition[i] - AxisSetPosition[i])/time;
+    }
+
+    // Convert from dps to duty cycle
+    // Stepper moder doesn't need this
+    convertToDutyCycle(setSpeed[1], 5000);
+    convertToDutyCycle(setSpeed[2], 3750);
+    convertToDutyCycle(setSpeed[3], 2500);
+
+    //send the ctrl, speed, speed, speed command here
+}
+
+// Pass by reference because it's easier
+void convertToDutyCycle(float& dpsSpeed, int gearRatio)
+{
+    dpsSpeed = (dpsSpeed*gearRatio)/11000;
 }
 
 
@@ -399,7 +396,6 @@ void updateMotorState()
                 AxisComplete[i-1] = true;
             }
         }
-    }
-    
+    } 
 }
 

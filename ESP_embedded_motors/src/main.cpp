@@ -371,7 +371,7 @@ void loop() {
             {
                 prevCommand = command;
 
-                setAxisSpeeds(args[1].toInt(),args[2].toInt(),args[3].toInt());
+                setAxisSpeeds(args[1].toInt(), args[2].toInt(), args[3].toInt());
                 
             }
         }
@@ -383,7 +383,7 @@ void loop() {
         {
             Stop();
         }
-        else if (args[0] == "stopAX")
+        else if (args[0] == "stop") // Stop a specific joint
         {
             motorList[args[1].toInt()-1]->stop();
         }
@@ -463,19 +463,6 @@ void safety_timeout()
     if (safetyOn && (millis() - lastCtrlCmd > 2000))  // if no control commands are received for 2 seconds
     {
         lastCtrlCmd = millis();
-
-        // Only ignore safety timeout if all motors are rotating
-        bool allRotating = true;
-        for (int i = 0; i < MOTOR_AMOUNT; i++)
-        {
-            if (!motorList[i]->isRotToPos())
-            {
-                allRotating = false;
-                break;
-            }
-        }
-        if (allRotating)
-            return;
 
         COMMS_UART.println("No Control, Safety Timeout");
         Stop();
