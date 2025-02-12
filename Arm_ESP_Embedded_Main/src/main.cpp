@@ -380,6 +380,11 @@ void findSpeedandTime(int time)               // Based on how long it will take 
 // Pass by reference because it's easier
 void convertToDutyCycle(float& dpsSpeed, int gearRatio)
 {
+    // Could be moved over to ESP_EMBEDDED_ARM?
+    // dps/6 = RPM
+    // RPM / GearRatio = RPM_Motor
+    // RPM_Motor / RPM_Max = duty cycle? 
+
     dpsSpeed = (dpsSpeed*gearRatio)/11000; // Retarded solution, should be changed
 }
 
@@ -393,7 +398,7 @@ void updateMotorState()
             {
                 // motorList[i-1]->stop();
                 if (!i)
-                {
+                {   
                     // Stop the stepper motor
                 }
                 else
